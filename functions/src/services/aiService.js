@@ -252,9 +252,9 @@ async function chat(messages, sessionId, chatId) {
   const genAI = new GoogleGenerativeAI(geminiKey);
 
   const MODELS = [
-    "gemini-2.5-flash",
-    "gemini-2.5-flash-lite",
-    "gemini-flash-latest",
+    "gemini-3.8-flash",      // Latest stable Flash model
+    "gemini-3.6-flash",      // Previous stable Flash
+    "gemini-2.5-flash",      // Older but still available
   ];
 
   let rawReply = null;

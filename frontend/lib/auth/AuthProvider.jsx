@@ -40,15 +40,26 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     async function tryRestoreSession() {
       try {
-        const { data } = await axiosClient.post("/api/auth/refresh");
-        setAccessToken(data.accessToken);
-        // Decode user info from the JWT payload (middle segment, base64)
-        const payload = JSON.parse(
-          atob(data.accessToken.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
-        );
-        setUser({ uid: payload.uid, role: payload.role, identifier: "" });
-      } catch {
+        console.log("[Auth] Attempting to restore session...");
+        const { data } = await axiosClient.post("/api/auth/refresh", {}, {
+          // Suppress axios error logging for this expected failure case
+          validateStatus: (status) => status < 500,
+        });
+        
+        if (data?.accessToken) {
+          setAccessToken(data.accessToken);
+          // Decode user info from the JWT payload (middle segment, base64)
+          const payload = JSON.parse(
+            atob(data.accessToken.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+          );
+          setUser({ uid: payload.uid, role: payload.role, identifier: "" });
+          console.log("[Auth] Session restored successfully for user:", payload.uid);
+        } else {
+          throw new Error("No access token in response");
+        }
+      } catch (err) {
         // No valid refresh cookie — user is not logged in, that's fine
+        console.log("[Auth] No active session found (this is normal if not logged in)");
         setAccessToken(null);
         setUser(null);
       } finally {

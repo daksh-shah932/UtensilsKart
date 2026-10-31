@@ -1,0 +1,10 @@
+export const PRODUCTS = [
+  { id:1, name:'Prestige Svachh Kadai', brand:'Prestige', category:'Cookware', price:1299, original:2199, rating:4.7, reviews:2341, tag:'Best Seller', img:'https://images.unsplash.com/photo-1592156328757-ae2941276b2c?w=600&h=600&fit=crop&auto=format' },
+  { id:2, name:'Hawkins Futura Tawa', brand:'Hawkins', category:'Cookware', price:899, original:1499, rating:4.5, reviews:1823, tag:'Top Rated', img:'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=600&h=600&fit=crop&auto=format' },
+  { id:3, name:'Milton Steel Dabba Set', brand:'Milton', category:'Storage', price:649, original:999, rating:4.6, reviews:904, tag:'New', img:'https://images.unsplash.com/photo-1592824555364-48a8ca0f0caf?w=600&h=600&fit=crop&auto=format' },
+  { id:4, name:'Victorinox Chef Knife', brand:'Victorinox', category:'Cutlery', price:1899, original:2799, rating:4.8, reviews:3102, tag:'Premium', img:'https://images.unsplash.com/photo-1596299085622-4f96269e5bc7?w=600&h=600&fit=crop&auto=format' },
+  { id:5, name:'Hawkins Pressure Cooker', brand:'Hawkins', category:'Cookware', price:2499, original:3999, rating:4.8, reviews:1567, tag:'Popular', img:'https://images.unsplash.com/photo-1588416820614-f8d6ac6cea56?w=600&h=600&fit=crop&auto=format' },
+  { id:6, name:'Savernake Bread Knife', brand:'Savernake', category:'Cutlery', price:3299, original:4499, rating:4.9, reviews:412, tag:'Staff Pick', img:'https://images.unsplash.com/photo-1613865994285-83b12407bf3e?w=600&h=600&fit=crop&auto=format' },
+  { id:7, name:'Stainless Steel Masala Dabba', brand:'Rena', category:'Storage', price:749, original:1199, rating:4.6, reviews:778, tag:'Traditional', img:'https://images.unsplash.com/photo-1771541897176-44a3e01dc484?w=600&h=600&fit=crop&auto=format' },
+  { id:8, name:'Borosil Mixing Bowls', brand:'Borosil', category:'Serveware', price:799, original:1299, rating:4.6, reviews:1045, tag:'Essential', img:'https://images.unsplash.com/photo-1529517986296-847580704921?w=600&h=600&fit=crop&auto=format' }
+];

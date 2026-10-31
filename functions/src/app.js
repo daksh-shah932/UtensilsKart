@@ -39,7 +39,12 @@ app.use("/api/payment", paymentRoutes);
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────────
 app.use((req, res) => {
-  res.status(404).json({ error: "Route not found" });
+  console.log(`[404] Route not found: ${req.method} ${req.originalUrl}`);
+  res.status(404).json({ 
+    error: "Route not found",
+    method: req.method,
+    path: req.originalUrl
+  });
 });
 
 // ─── Global Error Handler ─────────────────────────────────────────────────────

@@ -24,12 +24,36 @@ async function chat(req, res) {
     });
 
   } catch (err) {
-    console.error("[AI Chat]", err.message);
-    const isQuota = err.message?.includes("429") || err.message?.includes("quota");
-    return res.status(503).json({
-      error: isQuota
-        ? "AI is temporarily rate-limited. Please wait a minute and try again."
-        : "AI service error",
+    console.error("[AI Chat Error]", err.message);
+    console.error("[AI Chat Stack]", err.stack);
+    
+    // Determine specific error type
+    const isQuota = err.message?.includes("429") || err.message?.includes("quota") || err.message?.includes("rate");
+    const isApiKey = err.message?.includes("API key") || err.message?.includes("GEMINI_API_KEY");
+    const isTimeout = err.message?.includes("timeout") || err.message?.includes("ETIMEDOUT");
+    const isNetwork = err.message?.includes("ECONNREFUSED") || err.message?.includes("fetch failed");
+    
+    let userError = "AI service encountered an error";
+    let statusCode = 503;
+    
+    if (isQuota) {
+      userError = "AI is temporarily rate-limited. The free tier allows 20 requests per day. Please wait or use a new API key.";
+      statusCode = 429;
+    } else if (isApiKey) {
+      userError = "Gemini API key is missing or invalid. Please check your .env file.";
+      statusCode = 500;
+    } else if (isTimeout) {
+      userError = "AI request timed out. Please try again with a simpler question.";
+      statusCode = 504;
+    } else if (isNetwork) {
+      userError = "Cannot connect to Gemini API. Please check your internet connection.";
+      statusCode = 503;
+    } else if (err.message) {
+      userError = err.message;
+    }
+    
+    return res.status(statusCode).json({
+      error: userError,
       details: err.message
     });
   }

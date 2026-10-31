@@ -368,7 +368,8 @@ export default function AssistantPage() {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Server error (${res.status})`);
+        const errorMessage = errorData.details || errorData.error || `Server error (${res.status})`;
+        throw new Error(errorMessage);
       }
 
       const data = await res.json();
@@ -387,14 +388,25 @@ export default function AssistantPage() {
       // Refresh sidebar history in background
       fetchHistory(sessionId);
     } catch (err) {
-      console.error("[Assistant] Send error:", err);
-      console.error("[Assistant] Error stack:", err.stack);
+      console.error("[Assistant] Send error:", err.message);
+      
+      // Determine user-friendly error message
+      let userMessage = "Could not reach the AI service. Please check if the backend is running on port 4001.";
+      
+      if (err.message.includes("rate-limited") || err.message.includes("quota")) {
+        userMessage = "AI is temporarily rate-limited. The free tier allows 20 requests per day. Please wait or use a new API key.";
+      } else if (err.message.includes("Failed to fetch") || err.message.includes("NetworkError")) {
+        userMessage = "Cannot connect to backend. Please ensure the server is running at http://localhost:4001";
+      } else if (err.message) {
+        userMessage = err.message;
+      }
+      
       setMessages((prev) => [
         ...prev,
         {
           id: generateId(),
           role: "assistant",
-          content: `⚠️ ${err.message || "Could not reach the AI service. Please ensure the backend is running on port 4001."}`,
+          content: `⚠️ ${userMessage}`,
           isError: true,
         },
       ]);

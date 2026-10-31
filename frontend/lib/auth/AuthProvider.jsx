@@ -41,16 +41,13 @@ export function AuthProvider({ children }) {
     async function tryRestoreSession() {
       try {
         console.log("[Auth] Attempting to restore session...");
-        const { data } = await axiosClient.post("/api/auth/refresh", {}, {
-          // Suppress axios error logging for this expected failure case
-          validateStatus: (status) => status < 500,
-        });
+        const response = await axiosClient.post("/api/auth/refresh");
         
-        if (data?.accessToken) {
-          setAccessToken(data.accessToken);
+        if (response.data?.accessToken) {
+          setAccessToken(response.data.accessToken);
           // Decode user info from the JWT payload (middle segment, base64)
           const payload = JSON.parse(
-            atob(data.accessToken.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+            atob(response.data.accessToken.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
           );
           setUser({ uid: payload.uid, role: payload.role, identifier: "" });
           console.log("[Auth] Session restored successfully for user:", payload.uid);

@@ -23,6 +23,11 @@ import { getProductPrimaryImage } from "@/lib/utils/productImages";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4001";
 
+// Debug log - verify API_BASE is correct
+if (typeof window !== "undefined") {
+  console.log("[Assistant] API_BASE configured as:", API_BASE);
+}
+
 // Helper to generate unique IDs
 const generateId = () => 
   Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
@@ -275,13 +280,20 @@ export default function AssistantPage() {
   const fetchHistory = useCallback(async (sid) => {
     if (!sid) return;
     try {
-      const res = await fetch(`${API_BASE}/api/ai/history?sessionId=${sid}`);
+      const url = `${API_BASE}/api/ai/history?sessionId=${sid}`;
+      console.log("[Assistant] Fetching history from:", url);
+      
+      const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
         setChatHistory(data.history || []);
+      } else {
+        console.warn("[Assistant] History fetch failed:", res.status, res.statusText);
       }
     } catch (err) {
-      console.error("[Assistant] Failed to load history:", err);
+      console.error("[Assistant] Failed to load history:", err.message);
+      console.error("[Assistant] API_BASE is:", API_BASE);
+      console.error("[Assistant] Check if backend is running at:", API_BASE);
     }
   }, []);
 
@@ -302,10 +314,23 @@ export default function AssistantPage() {
     setChatId(generateId());
 
     // Check backend health
-    fetch(`${API_BASE}/api/ai/health`)
-      .then((r) => r.json())
-      .then((data) => setAiStatus(data.status))
-      .catch(() => setAiStatus("offline"));
+    const healthUrl = `${API_BASE}/api/ai/health`;
+    console.log("[Assistant] Checking backend health at:", healthUrl);
+    
+    fetch(healthUrl)
+      .then((r) => {
+        console.log("[Assistant] Backend health response:", r.status, r.statusText);
+        return r.json();
+      })
+      .then((data) => {
+        console.log("[Assistant] Backend health data:", data);
+        setAiStatus(data.status);
+      })
+      .catch((err) => {
+        console.error("[Assistant] Backend health check failed:", err.message);
+        console.error("[Assistant] Make sure backend is running at:", API_BASE);
+        setAiStatus("offline");
+      });
 
     // Load past chat sessions
     fetchHistory(sid);
